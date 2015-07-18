@@ -3,4 +3,6 @@ class Song < ActiveRecord::Base
   has_many :categories, through: :category_songs
 
   has_many :scores, dependent: :destroy
+
+  belongs_to :artist
 end
