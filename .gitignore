@@ -1,0 +1,6 @@
+.bundle/
+db/production.sqlite3
+log/development.log
+log/production.log
+log/prodution.log
+vendor/bundle/
