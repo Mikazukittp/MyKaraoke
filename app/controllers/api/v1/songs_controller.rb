@@ -10,8 +10,17 @@ class Api::V1::SongsController < ApplicationController
   YOUTUBE_API_VERSION = 'v3'
 
   def index
-    @songs = Category.find(params[:category_id]).songs
-    render json: @songs
+    @songs = Category.find(params[:category_id]).songs.includes(:scores)
+
+    @songs.each do |song|
+      song.like = song.scores.where(category_id: params[:category_id]).count
+    end
+
+    json = JSON.parse(@songs.to_json(methods: :like))
+    json.sort_by! { |hash| -hash['like'].to_i }
+    json.first(10)
+
+    render json: json
   end
 
   def show
