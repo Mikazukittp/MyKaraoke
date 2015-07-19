@@ -1,19 +1,18 @@
 class Api::V1::CategoriesController < ApplicationController
   #一覧 > GET
-  #
   def index
-    personal = {'name' => 'hoge', 'old' => 28}
-    render :json => personal
+    @category = UserType.find(params[:user_type_id]).categories
+
+    render json: @category
   end
 
-  #ID指定して単体のCategoryを出す > GET
+  #usertypeを指定してCategoryを出す > GET
   def show
   end
 
   #新規作成 > POST
   def create
     @category = Category.create(category_params)
-    #ここには、将来的にUser
 
     render json: @category
   end
