@@ -7,6 +7,7 @@ Rails.application.routes.draw do
         get 'check', :on => :collection
       end
       resource :users, only: [:show, :create]
+      resources :categories, only: [:index, :show, :create]
     end
   end
 end
