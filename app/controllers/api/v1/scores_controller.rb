@@ -1,7 +1,8 @@
 class Api::V1::ScoresController < ApplicationController
+  before_action :get_user
 
   def index
-    @scores = Score.all
+    @scores = Score.where(user_id: @user.id)
     render json: @scores
   end
 
@@ -11,25 +12,43 @@ class Api::V1::ScoresController < ApplicationController
   end
 
   def create
-    @score = Score.create(song_params)
+    @score = Score.create(score_params)
+
+    return render json: { message: 'すでに「歌いたい」しています' }, status: 500 if utaitai?
+
+    @score.user_id = @user.id
+    @score.save!
+
     render json: @score
   end
 
   def update
     @score = Score.find(params[:id])
-    @score.update(song_params)
+    @score.update(score_params)
     render json: @score
   end
 
   def destroy
     Score.find(params[:id]).destroy!
-    render json: {message: '削除が完了しました'}, status: :ok
+    render json: { message: '削除が完了しました' }, status: :ok
+  end
+
+  def check
+    render json: utaitai?
   end
 
   private
 
-  def song_params
-    params.require(:score).permit(:category_id, :song_id, :user_id)
+  def score_params
+    params.require(:score).permit(:category_id, :song_id)
+  end
+
+  def utaitai?
+    Score.exists?(category_id: params[:category_id], song_id: params[:song_id], user_id: @user.id)
+  end
+
+  def get_user
+    @user = User.find_by(token: request.headers[:Token])
   end
 
 end
