@@ -7,7 +7,8 @@ class Api::V1::UsersController < ApplicationController
 
   def show
     @user = User.find_by(token: request.headers[:Token])
-    render json: @user
+
+    render json: get_user_type(@user)
   end
 
   def create
@@ -23,13 +24,13 @@ class Api::V1::UsersController < ApplicationController
     @user.new_token
     @user.save!
 
-    render json: @user
+    render json: get_user_type(@user)
   end
 
   def update
     @user = User.find(params[:id])
     @user.update(user_params)
-    render json: @user
+    render json: get_user_type(@user)
   end
 
   def destroy
@@ -43,6 +44,12 @@ class Api::V1::UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:name)
+  end
+
+  def get_user_type(user)
+    json = JSON.parse(user.to_json)
+    json[:user_type] = user.user_type
+    json
   end
 
 end
