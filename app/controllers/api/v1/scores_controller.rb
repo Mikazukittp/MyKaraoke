@@ -40,7 +40,7 @@ class Api::V1::ScoresController < ApplicationController
   private
 
   def score_params
-    params.require(:score).permit(:category_id, :song_id)
+    params.permit(:category_id, :song_id)
   end
 
   def utaitai?

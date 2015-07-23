@@ -16,11 +16,7 @@ class Api::V1::SongsController < ApplicationController
       song.like = song.scores.where(category_id: params[:category_id]).count
     end
 
-    json = JSON.parse(@songs.to_json(methods: :like))
-    json.sort_by! { |hash| -hash['like'].to_i }
-    json.first(10)
-
-    render json: json
+    render json: get_song_json(@songs)
   end
 
   def show
@@ -53,8 +49,15 @@ class Api::V1::SongsController < ApplicationController
 
   private
 
+  def get_song_json(songs)
+    json = JSON.parse(songs.to_json(methods: [:like, :artist]))
+    json.sort_by! { |hash| -hash['like'].to_i }
+    json.first(10)
+    json
+  end
+
   def song_params
-    params.require(:song).permit(:title, :artist)
+    params.permit(:title, :artist)
   end
 
   def get_service
